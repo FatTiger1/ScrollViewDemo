@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		04EA310121DCA080008CE0EB /* MainTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 04EA310021DCA080008CE0EB /* MainTableView.m */; };
 		04F10A9A21D5B185002F9126 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 04F10A9921D5B185002F9126 /* AppDelegate.m */; };
 		04F10A9D21D5B185002F9126 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04F10A9C21D5B185002F9126 /* ViewController.m */; };
 		04F10AA021D5B185002F9126 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 04F10A9E21D5B185002F9126 /* Main.storyboard */; };
@@ -39,6 +40,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		04EA30FF21DCA080008CE0EB /* MainTableView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MainTableView.h; sourceTree = "<group>"; };
+		04EA310021DCA080008CE0EB /* MainTableView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MainTableView.m; sourceTree = "<group>"; };
 		04F10A9521D5B185002F9126 /* ScrollViewDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ScrollViewDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		04F10A9821D5B185002F9126 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		04F10A9921D5B185002F9126 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -124,6 +127,8 @@
 				04F10ACE21D60854002F9126 /* SubViewController.m */,
 				04F10A9B21D5B185002F9126 /* ViewController.h */,
 				04F10A9C21D5B185002F9126 /* ViewController.m */,
+				04EA30FF21DCA080008CE0EB /* MainTableView.h */,
+				04EA310021DCA080008CE0EB /* MainTableView.m */,
 				04F10ACA21D60648002F9126 /* MainCell.h */,
 				04F10ACB21D60648002F9126 /* MainCell.m */,
 				04F10AD121D616B8002F9126 /* PageView.h */,
@@ -344,6 +349,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				04EA310121DCA080008CE0EB /* MainTableView.m in Sources */,
 				04F10ACF21D60854002F9126 /* SubViewController.m in Sources */,
 				04F10AD321D616B8002F9126 /* PageView.m in Sources */,
 				04F10A9D21D5B185002F9126 /* ViewController.m in Sources */,

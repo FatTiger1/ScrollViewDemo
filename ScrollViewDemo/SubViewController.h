@@ -18,6 +18,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic,assign)BOOL vcCanScroll;
 //能否内部刷新，（是否达到时机，外部tableview.contentOffset.y ==0）
 @property(nonatomic,assign)BOOL isRefresh;
+
+- (void)scrollToTop;
+- (void)setFrameWith:(CGRect)frame;
 @end
 
 NS_ASSUME_NONNULL_END

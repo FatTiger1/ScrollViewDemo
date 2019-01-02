@@ -16,7 +16,7 @@
 @property(nonatomic, strong)UIScrollView * scrollView;
 @property(nonatomic, assign)NSInteger currentPage;
 @property(nonatomic, weak)UIViewController * viewController;
-@property(nonatomic, strong)NSMutableArray * viewControllers;
+
 
 
 @end
@@ -40,7 +40,7 @@
     [self addSubview:self.topLabel];
     SubViewController * subViewController = [[SubViewController alloc] init];
     [self.viewControllers addObject:subViewController];
-    subViewController.view.frame = CGRectMake(0, 30, frame.size.width, frame.size.height-30);
+    [subViewController setFrameWith:CGRectMake(0, 30, frame.size.width, SCREENHEIGHT-self.topLabel.mj_h-kNavBarHeaderHeight)];
     [self addSubview:subViewController.view];
 }
 
