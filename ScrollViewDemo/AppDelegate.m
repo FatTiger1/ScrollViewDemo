@@ -19,7 +19,9 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     ViewController * viewController = [[ViewController alloc] init];
-    self.window.rootViewController = viewController;
+    UINavigationController * nav = [[UINavigationController alloc] initWithRootViewController:viewController];
+    nav.navigationBar.barTintColor = [UIColor blueColor];
+    self.window.rootViewController = nav;
     [self.window makeKeyAndVisible];
     return YES;
 }

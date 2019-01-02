@@ -8,6 +8,12 @@
 
 #import "MainCell.h"
 #import "PageView.h"
+#import "SubViewController.h"
+
+@interface MainCell ()
+@property(nonatomic, strong)PageView * pageView;
+
+@end
 
 @implementation MainCell
 
@@ -19,8 +25,35 @@
 }
 
 - (void)setUp{
-    PageView * pageView = [[PageView alloc] initWithFrame:CGRectMake(0, 0, SCREENWIDTH, SCREENHEIGHT-200)];
-    [self.contentView addSubview:pageView];
+    self.pageView = [[PageView alloc] initWithFrame:CGRectMake(0, 0, SCREENWIDTH, SCREENHEIGHT)];
+    [self.contentView addSubview:self.pageView];
+}
+
+- (void)scrollToTop{
+    [self.pageView.viewControllers enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        SubViewController * subViewController = (SubViewController *)obj;
+        [subViewController scrollToTop];
+    }];
+}
+
+- (void)setCellCanScroll:(BOOL)cellCanScroll{
+    _cellCanScroll = cellCanScroll;
+    [self.pageView.viewControllers enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        SubViewController * subViewController = (SubViewController *)obj;
+        subViewController.vcCanScroll = cellCanScroll;
+        if (!cellCanScroll) {
+            subViewController.tableView.contentOffset = CGPointZero;
+        }
+    }];
+}
+
+- (void)setIsRefresh:(BOOL)isRefresh{
+    _isRefresh = isRefresh;
+    [self.pageView.viewControllers enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        SubViewController * subViewController = (SubViewController *)obj;
+        subViewController.isRefresh = isRefresh;
+    }];
+    
 }
 
 - (void)awakeFromNib {

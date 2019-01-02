@@ -8,9 +8,11 @@
 
 #import "ViewController.h"
 #import "MainCell.h"
+#import "MainTableView.h"
+
 
 @interface ViewController ()<UITableViewDelegate,UITableViewDataSource>
-@property(nonatomic, strong)UITableView * tableView;
+@property(nonatomic, strong)MainTableView * tableView;
 @property(nonatomic, strong)UIView * headView;
 @property(nonatomic, strong)MainCell * contentCell;
 //页面是否可以d滚动
@@ -21,6 +23,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
     [self registNotification];
     [self setUp];
 }
@@ -35,21 +38,26 @@
 }
 
 - (void)setUp{
-    self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, self.view.mj_w, self.view.mj_h) style:UITableViewStylePlain];
+    self.tableView = [[MainTableView alloc] initWithFrame:CGRectMake(0, kNavBarHeaderHeight, SCREENWIDTH, SCREENHEIGHT-kNavBarHeaderHeight) style:UITableViewStylePlain];
+    if (@available(iOS 11.0,*)) {
+        self.tableView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    }else{
+       self.automaticallyAdjustsScrollViewInsets = NO;
+    }
+    // 默认页面可以滚动
+    self.canScroll = YES;
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
-    self.tableView.rowHeight = self.view.mj_h - 200;
+    self.tableView.bounces = NO;
+    self.tableView.rowHeight = self.view.mj_h - kNavBarHeaderHeight;
     self.headView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 200)];
     self.headView.backgroundColor = [UIColor yellowColor];
     self.tableView.tableHeaderView = self.headView;
     [self.view addSubview:self.tableView];
     MJWeakSelf
-    self.tableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [weakSelf.tableView.mj_header endRefreshing];
-        });
-    }];
-
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+         [weakSelf scrollViewDidScroll:self.tableView];
+    });
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
@@ -66,39 +74,38 @@
     if (!self.contentCell) {
         self.contentCell = [[MainCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"cell"];
         self.contentCell.selectionStyle = UITableViewCellSelectionStyleNone;
-        MJWeakSelf
-        [self.contentCell setPageChangedBlock:^(NSInteger selectedIndex) {
-            
-            [weakSelf scrollViewDidScroll:tableView];
-        }];
+//        MJWeakSelf
+//        [self.contentCell setPageChangedBlock:^(NSInteger selectedIndex) {
+//            [weakSelf scrollViewDidScroll:tableView];
+//        }];
     }
     self.contentCell.contentView.backgroundColor = [UIColor orangeColor];
     return self.contentCell;
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView{
-//    if (scrollView == self.tableView) {
-//        CGFloat h = self.tableView.tableHeaderView.mj_h;
-//        //告知视图能否滚动，fabs处理偏移量和头部高 无法绝对精确，而导致某些手机下滚动问题
-//        if (fabs(scrollView.contentOffset.y -h) <= 0.5) {//滚动距离为headView高度的那一刻
-//            if (self.canScroll) {///能滚动
-//                self.canScroll = NO;
-//                self.contentCell.cellCanScroll = YES;
-//            }else{
-//                self.contentCell.cellCanScroll = YES;
-//            }
-//        }else{
-//            if (!self.canScroll) {//子视图没有到顶
-////                scrollView.contentOffset = CGPointMake(0, h);
-//            }
-//        }
-//        //告知视图能否内部vc刷新
-//        if (scrollView.contentOffset.y == 0) {
-//            self.contentCell.isRefresh = YES;
-//        }else{
-//            self.contentCell.isRefresh = NO;
-//        }
-//    }
+    if (scrollView == self.tableView) {
+        CGFloat h = self.tableView.tableHeaderView.mj_h;
+        //告知视图能否滚动，fabs处理偏移量和头部高 无法绝对精确，而导致某些手机下滚动问题
+        if (fabs(scrollView.contentOffset.y -h) <= 0.5+kNavBarHeaderHeight) {//滚动距离为headView高度的那一刻
+            if (self.canScroll) {///能滚动
+                self.canScroll = NO;
+                self.contentCell.cellCanScroll = YES;
+            }else{
+                self.contentCell.cellCanScroll = YES;
+            }
+        }else{
+            if (!self.canScroll) {//子视图没有到顶
+                scrollView.contentOffset = CGPointMake(0, h-kNavBarHeaderHeight);
+            }
+        }
+        //告知视图能否内部vc刷新
+        if (scrollView.contentOffset.y == 0) {
+            self.contentCell.isRefresh = YES;
+        }else{
+            self.contentCell.isRefresh = NO;
+        }
+    }
 }
 
 @end

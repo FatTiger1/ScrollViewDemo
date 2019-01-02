@@ -11,7 +11,17 @@
 
 #define SCREENWIDTH [UIScreen mainScreen].bounds.size.width
 #define SCREENHEIGHT [UIScreen mainScreen].bounds.size.height
+#define IPHONE_X \
+({BOOL isPhoneX = NO;\
+if (@available(iOS 11.0, *)) {\
+isPhoneX = [[UIApplication sharedApplication] delegate].window.safeAreaInsets.bottom > 0.0;\
+}\
+(isPhoneX);})
 
+///导航栏高度
+#define kNavBarHeaderHeight (IPHONE_X ? 88 : 64)
+///iphone底部高度
+#define kiPhoneFooterHeight (IPHONE_X ? 34 : 0)
 
 #import "MJRefresh.h"
 // Include any system framework and library headers here that should be included in all compilation units.
