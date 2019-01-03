@@ -53,6 +53,11 @@
     self.headView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 200)];
     self.headView.backgroundColor = [UIColor yellowColor];
     self.tableView.tableHeaderView = self.headView;
+    self.tableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self.tableView.mj_header endRefreshing];
+        });
+    }];
     [self.view addSubview:self.tableView];
     MJWeakSelf
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -87,7 +92,7 @@
     if (scrollView == self.tableView) {
         CGFloat h = self.tableView.tableHeaderView.mj_h;
         //告知视图能否滚动，fabs处理偏移量和头部高 无法绝对精确，而导致某些手机下滚动问题
-        if (fabs(scrollView.contentOffset.y -h) <= 0.5+kNavBarHeaderHeight) {//滚动距离为headView高度的那一刻
+        if (fabs(scrollView.contentOffset.y -h) <= 0.5) {//滚动距离为headView高度的那一刻
             if (self.canScroll) {///能滚动
                 self.canScroll = NO;
                 self.contentCell.cellCanScroll = YES;
@@ -96,7 +101,7 @@
             }
         }else{
             if (!self.canScroll) {//子视图没有到顶
-                scrollView.contentOffset = CGPointMake(0, h-kNavBarHeaderHeight);
+                scrollView.contentOffset = CGPointMake(0, h);
             }
         }
         //告知视图能否内部vc刷新
