@@ -12,9 +12,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface PageView : UIScrollView
 
-@property(nonatomic, strong)NSMutableArray * viewControllers;
-
 @property (nonatomic, copy) void (^pageChangedBlock)(NSInteger selectedIndex);
+@property(nonatomic, strong)NSArray * viewControllers;//控制器数组
+- (id)initWithFrame:(CGRect)frame controllers:(NSArray *)controllers titles:(NSArray *)titles headHeight:(CGFloat)headHeight;
 
 @end
 

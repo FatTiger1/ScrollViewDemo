@@ -8,40 +8,86 @@
 
 #import "PageView.h"
 #import "SubViewController.h"
-
+static int TopButtonTag = 100;
 @interface PageView()
-
-@property(nonatomic, strong)UILabel * topLabel;
+@property(nonatomic, assign)CGRect selfFrame;
 @property(nonatomic, strong)UIScrollView * topTabScrollView;
 @property(nonatomic, strong)UIScrollView * scrollView;
 @property(nonatomic, assign)NSInteger currentPage;
 @property(nonatomic, weak)UIViewController * viewController;
 
+@property(nonatomic, strong)NSArray * titles;//标题
+@property(nonatomic, assign)CGFloat topButtonWidth;//顶部按钮宽度
+@property(nonatomic, assign)CGFloat headHeight;//头视图高度
+@property(nonatomic, strong)UIButton * currentButton;
 
 
 @end
 
 
 @implementation PageView
-
-- (id)initWithFrame:(CGRect)frame{
+- (id)initWithFrame:(CGRect)frame controllers:(NSArray *)controllers titles:(NSArray *)titles headHeight:(CGFloat)headHeight{
     if (self = [super initWithFrame:frame]) {
-        self.viewControllers = @[].mutableCopy;
-        [self setUpWithFrame:frame];
+        self.viewControllers = controllers;
+        self.titles = titles;
+        self.selfFrame = frame;
+        [self initData];
+        [self setUp];
     }
     return self;
 }
 
-- (void)setUpWithFrame:(CGRect)frame{
-    self.topLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, 30)];
-    self.topLabel.textAlignment = NSTextAlignmentCenter;
-    self.topLabel.text = @"标题";
-    self.topLabel.backgroundColor = [UIColor redColor];
-    [self addSubview:self.topLabel];
-    SubViewController * subViewController = [[SubViewController alloc] init];
-    [self.viewControllers addObject:subViewController];
-    [subViewController setFrameWith:CGRectMake(0, 30, frame.size.width, SCREENHEIGHT-self.topLabel.mj_h-kNavBarHeaderHeight)];
-    [self addSubview:subViewController.view];
+- (void)initData{
+    self.topButtonWidth = SCREENWIDTH/3;
+}
+
+- (void)setUp{
+    [self addSubview:self.topTabScrollView];
+    [self addSubview:self.scrollView];
+}
+
+
+- (UIScrollView *)topTabScrollView{
+    if (!_topTabScrollView) {
+        _topTabScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, self.selfFrame.size.width, 45)];
+        _topTabScrollView.showsHorizontalScrollIndicator = NO;
+        _topTabScrollView.backgroundColor = [UIColor whiteColor];
+        _topTabScrollView.contentSize = CGSizeMake(self.topButtonWidth * self.titles.count, 0);
+        for (int i = 0 ; i < self.titles.count; i ++) {
+            UIButton * button = [[UIButton alloc] initWithFrame:CGRectMake(i * self.topButtonWidth, 0, self.topButtonWidth, _topTabScrollView.mj_h)];
+            button.tag = TopButtonTag + i;
+            [button setTitle:self.titles[i] forState:UIControlStateNormal];
+            [button setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
+            [button setTitleColor:[UIColor blackColor] forState:UIControlStateSelected];
+            [button addTarget:self action:@selector(titleOnclick:) forControlEvents:UIControlEventTouchUpInside];
+            [_topTabScrollView addSubview:button];
+            if (i == 0) {
+                button.selected = YES;
+                self.currentButton = button;
+            }
+        }
+    }
+    return _topTabScrollView;
+}
+
+- (void)titleOnclick:(UIButton *)button{
+    self.currentButton.selected = NO;
+    button.selected = YES;
+    self.currentButton = button;
+}
+
+- (UIScrollView *)scrollView{
+    if (!_scrollView) {
+        _scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, _topTabScrollView.mj_h, self.selfFrame.size.width,self.selfFrame.size.height - _topTabScrollView.mj_h)];
+        _scrollView.showsHorizontalScrollIndicator = NO;
+        _scrollView.contentSize = CGSizeMake(self.selfFrame.size.width * self.viewControllers.count, 0);
+        for (int i = 0; i < self.viewControllers.count; i ++) {
+            UIViewController * viewController = self.viewControllers[i];
+            viewController.view.frame = CGRectMake(self.selfFrame.size.width * i, 0, self.selfFrame.size.width, _scrollView.mj_h);
+            [_scrollView addSubview:viewController.view];
+        }
+    }
+    return _scrollView;
 }
 
 @end
