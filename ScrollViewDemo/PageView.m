@@ -9,7 +9,7 @@
 #import "PageView.h"
 #import "SubViewController.h"
 static int TopButtonTag = 100;
-@interface PageView()
+@interface PageView()<UIScrollViewDelegate>
 @property(nonatomic, assign)CGRect selfFrame;
 @property(nonatomic, strong)UIScrollView * topTabScrollView;
 @property(nonatomic, strong)UIScrollView * scrollView;
@@ -46,7 +46,6 @@ static int TopButtonTag = 100;
     [self addSubview:self.scrollView];
 }
 
-
 - (UIScrollView *)topTabScrollView{
     if (!_topTabScrollView) {
         _topTabScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, self.selfFrame.size.width, 45)];
@@ -74,20 +73,40 @@ static int TopButtonTag = 100;
     self.currentButton.selected = NO;
     button.selected = YES;
     self.currentButton = button;
+    self.currentPage = button.tag - TopButtonTag;
+}
+
+- (void)setCurrentPage:(NSInteger)currentPage{
+    __block PageView * weakSelf = self;
+    [UIView animateWithDuration:0.3 animations:^{
+        weakSelf.scrollView.contentOffset = CGPointMake(weakSelf.scrollView.mj_w*currentPage, 0);
+    }];
 }
 
 - (UIScrollView *)scrollView{
     if (!_scrollView) {
         _scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, _topTabScrollView.mj_h, self.selfFrame.size.width,self.selfFrame.size.height - _topTabScrollView.mj_h)];
+        _scrollView.delegate = self;
         _scrollView.showsHorizontalScrollIndicator = NO;
+        _scrollView.pagingEnabled = YES;
         _scrollView.contentSize = CGSizeMake(self.selfFrame.size.width * self.viewControllers.count, 0);
         for (int i = 0; i < self.viewControllers.count; i ++) {
-            UIViewController * viewController = self.viewControllers[i];
-            viewController.view.frame = CGRectMake(self.selfFrame.size.width * i, 0, self.selfFrame.size.width, _scrollView.mj_h);
+            SubViewController * viewController = self.viewControllers[i];
+            [viewController setFrameWith:CGRectMake(self.selfFrame.size.width * i, 0, self.selfFrame.size.width, _scrollView.mj_h)];
             [_scrollView addSubview:viewController.view];
         }
     }
     return _scrollView;
 }
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+    int page = scrollView.mj_offsetX / scrollView.mj_w;
+    UIButton * button = [self viewWithTag:TopButtonTag + page];
+    self.currentButton.selected = NO;
+    button.selected = YES;
+    self.currentButton = button;
+}
+
+
 
 @end
